@@ -1,0 +1,29 @@
+<head></head>
+
+<body>
+    <h1>Video Info</h1>
+    <form>
+        <div>
+            <label>Select a video</label>
+            <input type=file accept="video/*" />
+        </div>
+        <button type="submit">Get Info</button>
+    </form>
+        <h3 id=result></h3>
+        <script>
+            const electron = require('electron');
+            const { ipcRenderer } = electron; //inter-proces communication, we will use this object to communicate between this window and electron main window
+
+            document.querySelector('form').addEventListener('submit', (event) => {
+                event.preventDefault();
+                //const file = document.querySelector('input').files[0] //takes the selected file, but you since we only need path part of the file, we will distructure it(see next line)
+                const { path } = document.querySelector('input').files[0] //this will only take path of the object
+                ipcRenderer.send('video:submit', path) //first argument is an event(but its just a name, so we can call it w/e), second arguemnt is the data we want to send
+                //debugger
+            }); 
+
+            ipcRenderer.on('video:path', (event, data) =>{
+                document.querySelector('#result').innerHTML = `Got this data - ${data} ` 
+            })
+        </script>
+</body>
